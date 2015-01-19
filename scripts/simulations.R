@@ -20,3 +20,11 @@ summary(mycross)
 genotypes <- pull.geno(mycross)
 head(genotypes)
 geno.names <- dimnames(genotypes)[[2]]
+
+# Demo values using brassica marker simulated data
+#sample significant markers
+m1 <- sample(geno.names, 3, replace = FALSE)
+m2 <- sample(geno.names, 2, replace = FALSE)
+m3 <- sample(geno.names, 2, replace = FALSE)
+m4 <- sample(geno.names, 1, replace = FALSE)
+m5 <- sample(geno.names, 2, replace = FALSE)
