@@ -35,15 +35,15 @@ m3 <- sample(geno.names, 2, replace = FALSE)
 m4 <- sample(geno.names, 1, replace = FALSE)
 
 ## get marker genotypes
-g11 <- (genotypes[,m1[1]])
+g11 <- genotypes[,m1[1]]
 g11
-g12 <- (genotypes[,m1[2]]) 
-g13 <- (genotypes[,m1[3]])
-g21 <- (genotypes[,m2[1]])
-g22 <- (genotypes[,m2[2]])
-g31 <- (genotypes[,m3[1]])
-g32 <- (genotypes[,m3[2]])
-g41 <- (genotypes[,m4[1]]) 
+g12 <- genotypes[,m1[2]]
+g13 <- genotypes[,m1[3]]
+g21 <- genotypes[,m2[1]]
+g22 <- genotypes[,m2[2]]
+g31 <- genotypes[,m3[1]]
+g32 <- genotypes[,m3[2]]
+g41 <- genotypes[,m4[1]]
 
 # function (orginal by Micheal Kuhn) to convert 0, 1 genotype assignments at markers into QTL with 
 # tunable effect size and variance
@@ -51,8 +51,8 @@ br_traits <- function(geno, effect = 1, variance = 0.1){
  variance <- variance*abs(effect)
  geno <- as.logical(geno)
  pheno <- numeric(length(geno))
- pheno[!geno] = rnorm(sum(!geno), 0, variance)
- pheno[geno] = rnorm(sum(geno), effect, variance)
+ pheno[!geno] <- rnorm(sum(!geno), 0, variance)
+ pheno[geno] <- rnorm(sum(geno), effect, variance)
  return(pheno)
 }
 
