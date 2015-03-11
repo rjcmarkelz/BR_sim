@@ -60,15 +60,112 @@ y1 <- br_traits(g11, effect = 2, variance = 0.1) + br_traits(g12, effect = 2, va
 y1
 
 # replace trait columns what trait names
-br_test_cross$pheno$trait1 <- br_traits(g11, effect = 2, variance = 0.1) + br_traits(g12, effect = 2, variance = 0.1)
+br_test_cross$pheno$trait1 <- br_traits(g11, effect = .1, variance = 0.8) + br_traits(g12, effect = .1, variance = 0.7)
 br_test_cross$pheno
 
+?write.cross
 
-scanout <- scanone(br_test_cross, pheno.col = 2)
+br_test_cross$pheno$trait2 <- br_traits(g22, effect = .1, variance = 0.5) + br_traits(g12, effect = .1, variance = 0.5)
+br_test_cross$pheno
+
+br_test_cross$pheno$trait3 <- br_traits(g31, effect = .1, variance = 0.5) + br_traits(g12, effect = .1, variance = 0.5)
+br_test_cross$pheno
+
+br_test_cross$pheno$trait4 <- br_traits(g22, effect = .1, variance = 0.5) + br_traits(g11, effect = .1, variance = 0.5)
+br_test_cross$pheno
+
+br_test_cross$pheno$trait5 <- br_traits(g41, effect = .1, variance = 0.5) + br_traits(g32, effect = .1, variance = 0.5)
+br_test_cross$pheno
+
+scanout1 <- scanone(br_test_cross, pheno.col = 2:6)
+head(scanout1)
 plot(scanout)
+
+#write this cross object for Amanjot and James
+setwd("/Users/Cody_2/git.repos/brassica_simulations/data")
+write.cross(br_test_cross, format = "csvsr")
+
+
+# using the actual brassica map
+brassica_sim <- read.cross("csvsr", genfile ="Brassica_F8_v2.1_gen.csv", 
+	                       phefile="phenotype.csv", 
+	                       genotypes=c("AA","BB"), na.strings = "-")
+
+head(brassica_sim)
+
+class(brassica_sim)[1] <- "riself"
+brassica_sim <- jittermap(brassica_sim)
+brassica_sim
+
+genotypes <- pull.geno(brassica_sim)
+head(genotypes)
+str(genotypes)
+genotypes[genotypes == 2] <- 0
+head(genotypes)
+geno.names <- dimnames(genotypes)[[2]]
+geno.names
+# Demo values using brassica marker simulated data
+# sample significant markers for our 4 simulated phenotypes
+# or define them as you wish
+m1 <- sample(geno.names, 3, replace = FALSE)
+m2 <- sample(geno.names, 2, replace = FALSE)
+m3 <- sample(geno.names, 2, replace = FALSE)
+m4 <- sample(geno.names, 1, replace = FALSE)
+
+## get marker genotypes
+g11 <- genotypes[,m1[1]]
+g11
+g12 <- genotypes[,m1[2]]
+g13 <- genotypes[,m1[3]]
+g21 <- genotypes[,m2[1]]
+g22 <- genotypes[,m2[2]]
+g31 <- genotypes[,m3[1]]
+g32 <- genotypes[,m3[2]]
+g41 <- genotypes[,m4[1]]
+
+# function (orginal by Micheal Kuhn) to convert 0, 1 genotype assignments at markers into QTL with 
+# tunable effect size and variance
+br_traits <- function(geno, effect = 1, variance = 0.1){
+ variance <- variance*abs(effect)
+ geno <- as.logical(geno)
+ pheno <- numeric(length(geno))
+ pheno[!geno] <- rnorm(sum(!geno), 0, variance)
+ pheno[geno] <- rnorm(sum(geno), effect, variance)
+ return(pheno)
+}
+
+y1 <- br_traits(g11, effect = 2, variance = 0.1) + br_traits(g12, effect = 2, variance = 0.1)
+y1
+
+# replace trait columns what trait names
+brassica_sim$pheno$trait1 <- br_traits(g11, effect = .1, variance = 0.8) + br_traits(g12, effect = .1, variance = 0.7)
+brassica_sim$pheno
+
+?write.cross
+
+brassica_sim$pheno$trait2 <- br_traits(g22, effect = .1, variance = 0.5) + br_traits(g12, effect = .1, variance = 0.5)
+brassica_sim$pheno
+
+brassica_sim$pheno$trait3 <- br_traits(g31, effect = .1, variance = 0.5) + br_traits(g12, effect = .1, variance = 0.5)
+brassica_sim$pheno
+
+brassica_sim$pheno$trait4 <- br_traits(g22, effect = .1, variance = 0.5) + br_traits(g11, effect = .1, variance = 0.5)
+brassica_sim$pheno
+
+brassica_sim$pheno$trait5 <- br_traits(g41, effect = .1, variance = 0.5) + br_traits(g32, effect = .1, variance = 0.5)
+brassica_sim$pheno
+
+summary(brassica_sim)
+
+brass_sim_scanone <- scanone(brassica_sim, pheno.col = 12:16)
+plot(brass_sim_scanone)
+head(brass_sim_scanone)
+
+setwd("/Users/Cody_2/git.repos/brassica_simulations/data")
+
+
+
 # this works to build whatever QTL model you want!
-
-
 # another way to make correlated phenotypes
 # generate correlated phenotypes, this is where you can generate any number of phenotypes that are or 
 # are not correlated with one another
